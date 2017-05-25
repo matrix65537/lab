@@ -4,7 +4,7 @@
 import lib
 
 @lib.timeit
-def sort(array):
+def insert_sort(array):
     length = len(array)
     for i in range(1, length):
         v = array[i]
@@ -16,7 +16,7 @@ def sort(array):
 
 
 def main():
-    lib.test_sort(sort)
+    lib.test_sort(insert_sort)
 
 if __name__ == '__main__':
     main()

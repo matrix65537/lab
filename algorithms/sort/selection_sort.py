@@ -4,7 +4,7 @@
 import lib
 
 @lib.timeit
-def sort(array):
+def selection_sort(array):
     length = len(array)
     for i in range(length):
         min_index = i
@@ -14,7 +14,7 @@ def sort(array):
         array[i], array[min_index] = array[min_index], array[i]
 
 def main():
-    lib.test_sort(sort)
+    lib.test_sort(selection_sort)
 
 if __name__ == '__main__':
     main()

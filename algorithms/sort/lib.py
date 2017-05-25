@@ -59,14 +59,14 @@ def is_sorted(array, reverse = False):
     return True
 
 def test_sort(sort_func):
-    filename = "1_0000.txt"
+    filename = "10_0000.txt"
     array = read_ints_from_file(filename)
     sort_func(array)
     assert(is_sorted(array) == True)
 
 def main():
-    ints = random_ints(1, 10000000, 10000)
-    write_ints_to_file("1_0000.txt", ints)
+    ints = random_ints(1, 10000000, 100000)
+    write_ints_to_file("10_0000.txt", ints)
 
 if __name__ == '__main__':
     main()

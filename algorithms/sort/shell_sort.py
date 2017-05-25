@@ -3,7 +3,8 @@
 
 import lib
 
-def sort1(array):
+@lib.timeit
+def shell_sort1(array):
     length = len(array)
     gap = length / 2
     while gap > 0:
@@ -18,7 +19,7 @@ def sort1(array):
         gap /= 2
 
 @lib.timeit
-def sort2(array):
+def shell_sort2(array):
     length = len(array)
     gap = length / 2
     while gap > 0:
@@ -31,8 +32,26 @@ def sort2(array):
             array[j] = v
         gap /= 2
 
+@lib.timeit
+def shell_sort3(array):
+    length = len(array)
+    gap = 1
+    while gap < length / 3:
+        gap = 3 * gap + 1
+    while gap >= 1:
+        for i in range(gap, length):
+            v = array[i]
+            j = i
+            while j > 0 and v < array[j-gap]:
+                array[j] = array[j-gap]
+                j -= gap
+            array[j] = v
+        gap /= 3
+
 def main():
-    lib.test_sort(sort2)
+    lib.test_sort(shell_sort1)
+    lib.test_sort(shell_sort2)
+    lib.test_sort(shell_sort3)
 
 if __name__ == '__main__':
     main()

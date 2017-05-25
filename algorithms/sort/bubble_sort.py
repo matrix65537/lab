@@ -4,7 +4,7 @@
 import lib
 
 @lib.timeit
-def sort(array):
+def bubble_sort(array):
     length = len(array)
     for i in range(length):
         flag = True
@@ -16,7 +16,7 @@ def sort(array):
             break
 
 def main():
-    lib.test_sort(sort)
+    lib.test_sort(bubble_sort)
 
 if __name__ == '__main__':
     main()
