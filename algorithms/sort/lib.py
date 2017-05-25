@@ -58,15 +58,22 @@ def is_sorted(array, reverse = False):
                 return False
     return True
 
+def gen_ints_file(filename, a, b, count):
+    print filename
+    ints = random_ints(a, b, count)
+    write_ints_to_file(filename, ints)
+
 def test_sort(sort_func):
-    filename = "10_0000.txt"
+    filename = "100_0000.txt"
     array = read_ints_from_file(filename)
     sort_func(array)
     assert(is_sorted(array) == True)
 
 def main():
-    ints = random_ints(1, 10000000, 100000)
-    write_ints_to_file("10_0000.txt", ints)
+    gen_ints_file("1_0000.txt", 1, 10000000, 1 * 10000)
+    gen_ints_file("10_0000.txt", 1, 10000000, 10 * 10000)
+    gen_ints_file("100_0000.txt", 1, 10000000, 100 * 10000)
+    gen_ints_file("1000_0000.txt", 1, 10000000, 1000 * 10000)
 
 if __name__ == '__main__':
     main()
