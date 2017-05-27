@@ -45,16 +45,16 @@ def write_ints_to_file(filename, ints, col = 0x10):
             if i % col == (col - 1):
                 fobj.write("\n")
 
-def is_sorted(array, reverse = False):
-    length = len(array)
+def is_sorted(a, reverse = False):
+    length = len(a)
     if length <= 1:
         return True
     for i in range(length - 1):
         if reverse:
-            if array[i] < array[i+1]:
+            if a[i] < a[i+1]:
                 return False
         else:
-            if array[i] > array[i+1]:
+            if a[i] > a[i+1]:
                 return False
     return True
 
@@ -64,10 +64,10 @@ def gen_ints_file(filename, a, b, count):
     write_ints_to_file(filename, ints)
 
 def test_sort(sort_func):
-    filename = "100_0000.txt"
-    array = read_ints_from_file(filename)
-    sort_func(array)
-    assert(is_sorted(array) == True)
+    filename = "1_0000.txt"
+    a = read_ints_from_file(filename)
+    sort_func(a)
+    assert(is_sorted(a) == True)
 
 def main():
     gen_ints_file("1_0000.txt", 1, 10000000, 1 * 10000)

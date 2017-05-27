@@ -4,13 +4,13 @@
 import lib
 
 @lib.timeit
-def bubble_sort(array):
-    length = len(array)
+def bubble_sort(a):
+    length = len(a)
     for i in range(length):
         flag = True
         for j in range(length - i - 1):
-            if array[j] > array[j+1]:
-                array[j], array[j+1] = array[j+1], array[j]
+            if a[j] > a[j+1]:
+                a[j], a[j+1] = a[j+1], a[j]
                 flag = False
         if flag:
             break
