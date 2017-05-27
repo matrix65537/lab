@@ -12,16 +12,13 @@ import algorithms.heap.heap_sort as heap_sort
 import testlib
 
 def main():
-    #testlib.test_sort(bubble_sort.bubble_sort, "bubble sort")
-    #testlib.test_sort(selection_sort.selection_sort, "selection sort")
-    #testlib.test_sort(insert_sort.insert_sort, "insert  sort")
-    testlib.test_sort(shell_sort.shell_sort1, "shell sort1")
-    testlib.test_sort(shell_sort.shell_sort2, "shell sort2")
-    testlib.test_sort(shell_sort.shell_sort3, "shell sort3")
-    testlib.test_sort(merge_sort.merge_sort1, "merge sort1")
-    testlib.test_sort(merge_sort.merge_sort2, "merge sort2")
-    testlib.test_sort(quick_sort.quick_sort, "quick sort")
-    testlib.test_sort(heap_sort.heap_sort, "heap sort")
+    #testlib.test_sort(bubble_sort.BubbleSort, "bubble sort")
+    #testlib.test_sort(selection_sort.SelectionSort, "selection sort")
+    #testlib.test_sort(insert_sort.InsertSort, "insert sort")
+    #testlib.test_sort(shell_sort.ShellSort, "shell sort")
+    testlib.test_sort(merge_sort.MergeSort, "merge sort")
+    testlib.test_sort(merge_sort.MergeSortBU, "merge sort BU")
+    testlib.test_sort(quick_sort.QuickSort, "quick sort")
 
 if __name__ == '__main__':
     main()

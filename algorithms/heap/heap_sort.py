@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #coding:utf8
 
+from algorithms.common.sortbase import Key, IntNode, SortBase
 import heap
 
 less = lambda x, y: x < y

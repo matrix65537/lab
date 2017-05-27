@@ -2,18 +2,21 @@
 #coding:utf8
 
 class Heap(object):
-    '''大顶堆实现'''
-    def __init__(self, less_func, values = None):
+    def __init__(self, values = None, ismax = True):
         #N记录当前有多少个节点
         self.N = 0
-        self.d = [0]
+        self.d = [None]
+        #记录大顶堆还是小顶堆
+        self.__ismax = ismax
         if values:
             for v in values:
                 self.insert(v)
-        self.less_func = less_func
 
     def less(self, i, j):
-        return self.less_func(self.d[i], self.d[j])
+        if self.__ismax:
+            return self.d[i] < self.d[j]
+        else:
+            return self.d[i] > self.d[j]
 
     def exch(self, i, j):
         self.d[i], self.d[j] = self.d[j], self.d[i]
@@ -71,7 +74,7 @@ class Heap(object):
         return self.N == 0
 
 def main():
-    heap = Heap(less_func = lambda a, b: a < b)
+    heap = Heap(ismax = True)
     for i in range(16):
         heap.insert(i)
     while not heap.is_empty():

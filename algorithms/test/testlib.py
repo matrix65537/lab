@@ -3,16 +3,18 @@
 
 import random
 import time
+from algorithms.common.sortbase import IntNode
 
 
 def timeit(func):
     def wrap(*args, **kwargs):
         start = time.clock()
         #print "begin func"
-        func(*args, **kwargs)
+        r = func(*args, **kwargs)
         #print "end func"
         end = time.clock()
         print "used:", end-start
+        return r
     return wrap
 
 
@@ -26,7 +28,7 @@ def read_ints_from_file(filename):
             if line.startswith("#"):
                 continue
             values = line.split()
-            values = [int(x) for x in values]
+            values = [IntNode(int(x)) for x in values]
             all_values += values
         return all_values
 
@@ -65,11 +67,11 @@ def gen_ints_file(filename, a, b, count):
 
 
 @timeit
-def test_sort(sort_func, name = ""):
-    filename = "10_0000.txt"
+def test_sort(sort_class, name = ""):
+    filename = "1_0000.txt"
     a = read_ints_from_file(filename)
     print name
-    sort_func(a)
+    sort_class.sort(a)
     assert(is_sorted(a) == True)
 
 def main():
