@@ -66,7 +66,7 @@ def gen_ints_file(filename, a, b, count):
 
 @timeit
 def test_sort(sort_func, name = ""):
-    filename = "1_0000.txt"
+    filename = "10_0000.txt"
     a = read_ints_from_file(filename)
     print name
     sort_func(a)

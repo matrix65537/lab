@@ -1,27 +1,22 @@
 #!/usr/bin/python
 #coding:utf8
 
-from scplib import *
-
-def less(a, b):
-    return a < b
-
 class Heap(object):
     '''大顶堆实现'''
     def __init__(self, less_func, values = None):
         #N记录当前有多少个节点
         self.N = 0
-        self.__datas = [0]
+        self.d = [0]
         if values:
             for v in values:
                 self.insert(v)
         self.less_func = less_func
 
     def less(self, i, j):
-        return self.less_func(self.__datas[i], self.__datas[j])
+        return self.less_func(self.d[i], self.d[j])
 
     def exch(self, i, j):
-        self.__datas[i], self.__datas[j] = self.__datas[j], self.__datas[i]
+        self.d[i], self.d[j] = self.d[j], self.d[i]
 
     def swim(self, k):
         while True:
@@ -35,7 +30,7 @@ class Heap(object):
             self.exch(k, k/2)
             k /= 2
 
-    def slink(self, k):
+    def sink(self, k):
         while True:
             if 2 * k > self.N:
                 break
@@ -52,22 +47,21 @@ class Heap(object):
 
     def insert(self, v):
         #当空间不足时，扩容2倍
-        if self.N + 1 == len(self.__datas):
-            self.__datas += [0] * len(self.__datas)
-            log.debug("extend to %d" %(len(self.__datas)))
+        if self.N + 1 == len(self.d):
+            self.d += [0] * len(self.d)
         #把节点保存到尾部，进行上浮
         self.N += 1
-        self.__datas[self.N] = v
+        self.d[self.N] = v
         self.swim(self.N)
 
     def top(self):
-        return self.__datas[1]
+        return self.d[1]
 
     def pop(self):
-        top = self.__datas[1]
+        top = self.d[1]
         self.exch(1, self.N)
         self.N -= 1
-        self.slink(1)
+        self.sink(1)
         return top
 
     def size(self):
@@ -77,15 +71,12 @@ class Heap(object):
         return self.N == 0
 
 def main():
-    log.set_log_level(5)
-    heap = Heap(less_func = less)
-    for i in range(1*10):
+    heap = Heap(less_func = lambda a, b: a < b)
+    for i in range(16):
         heap.insert(i)
-    log.debug("insert finish")
     while not heap.is_empty():
         m = heap.pop()
         print m,
-    log.debug("pop finish")
 
 if __name__ == '__main__':
     main()

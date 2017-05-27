@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #coding:utf8
 
-#使用辅助数组进行merge [a, b], [b+1, c]
+#使用辅助数组进行merge [l, mid], [mid+1, h]
 def merge(a, aux, l, mid, h):
     for k in range(l, h + 1):
         aux[k] = a[k]
