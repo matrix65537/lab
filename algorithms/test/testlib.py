@@ -8,9 +8,9 @@ import time
 def timeit(func):
     def wrap(*args, **kwargs):
         start = time.clock()
-        print "begin func"
+        #print "begin func"
         func(*args, **kwargs)
-        print "end func"
+        #print "end func"
         end = time.clock()
         print "used:", end-start
     return wrap
@@ -63,9 +63,12 @@ def gen_ints_file(filename, a, b, count):
     ints = random_ints(a, b, count)
     write_ints_to_file(filename, ints)
 
-def test_sort(sort_func):
+
+@timeit
+def test_sort(sort_func, name = ""):
     filename = "1_0000.txt"
     a = read_ints_from_file(filename)
+    print name
     sort_func(a)
     assert(is_sorted(a) == True)
 

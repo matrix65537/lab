@@ -1,9 +1,6 @@
 #!/usr/bin/python
 #coding:utf8
 
-import lib
-
-@lib.timeit
 def insert_sort(a):
     length = len(a)
     for i in range(1, length):
@@ -14,9 +11,8 @@ def insert_sort(a):
             j -= 1
         a[j] = v
 
-
 def main():
-    lib.test_sort(insert_sort)
+    pass
 
 if __name__ == '__main__':
     main()

@@ -1,9 +1,6 @@
 #!/usr/bin/python
 #coding:utf8
 
-import lib
-import random
-
 #挖坑填数
 def partition(a, low, high):
     x = a[low]
@@ -52,14 +49,12 @@ def qsort(a, low, high):
     qsort(a, low, j - 1)
     qsort(a, j + 1, high)
 
-@lib.timeit
 def quick_sort(a):
     length = len(a)
     qsort(a, 0, length - 1)
 
-
 def main():
-    lib.test_sort(quick_sort)
+    pass
 
 if __name__ == '__main__':
     main()

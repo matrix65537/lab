@@ -1,8 +1,6 @@
 #!/usr/bin/python
 #coding:utf8
 
-import lib
-
 #使用辅助数组进行merge [a, b], [b+1, c]
 def merge(a, aux, l, mid, h):
     for k in range(l, h + 1):
@@ -48,13 +46,12 @@ def m_sort(a, aux, l, h):
             merge(a, aux, l, mid, h)
 
 #自顶向下的归并
-@lib.timeit
 def merge_sort1(a):
     aux = a[::]
     m_sort(a, aux, 0, len(a) - 1)
 
+
 #自底向上的归并
-@lib.timeit
 def merge_sort2(a):
     length = len(a)
     aux = a[::]
@@ -65,8 +62,7 @@ def merge_sort2(a):
         n *= 2
 
 def main():
-    lib.test_sort(merge_sort1)
-    lib.test_sort(merge_sort2)
+    pass
 
 if __name__ == '__main__':
     main()

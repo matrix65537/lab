@@ -1,9 +1,6 @@
 #!/usr/bin/python
 #coding:utf8
 
-import lib
-
-@lib.timeit
 def shell_sort1(a):
     length = len(a)
     gap = length / 2
@@ -18,7 +15,6 @@ def shell_sort1(a):
                 a[j] = v
         gap /= 2
 
-@lib.timeit
 def shell_sort2(a):
     length = len(a)
     gap = length / 2
@@ -32,7 +28,6 @@ def shell_sort2(a):
             a[j] = v
         gap /= 2
 
-@lib.timeit
 def shell_sort3(a):
     length = len(a)
     gap = 1
@@ -49,9 +44,7 @@ def shell_sort3(a):
         gap /= 3
 
 def main():
-    lib.test_sort(shell_sort1)
-    lib.test_sort(shell_sort2)
-    lib.test_sort(shell_sort3)
+    pass
 
 if __name__ == '__main__':
     main()

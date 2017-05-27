@@ -1,9 +1,6 @@
 #!/usr/bin/python
 #coding:utf8
 
-import lib
-
-@lib.timeit
 def bubble_sort(a):
     length = len(a)
     for i in range(length):
@@ -16,7 +13,7 @@ def bubble_sort(a):
             break
 
 def main():
-    lib.test_sort(bubble_sort)
+    pass
 
 if __name__ == '__main__':
     main()
