@@ -35,15 +35,19 @@ class List(object):
         tail.next = node
 
     def del_head(self):
+        node = self.__head.next
         if self.__head.next:
             self.__head.next = self.__head.next.next
+        return node
 
     def del_tail(self):
         if self.__head.next:
             node = self.__head
             while node.next.next:
                 node = node.next
+            tail = node.next
             node.next = None
+            return tail
 
     def reverse(self):
         prev = None
@@ -84,11 +88,19 @@ class DoubleCircleList(object):
 
     def del_head(self):
         if self.__head.next != self.__head:
-            self.del_node(self.__head.next)
+            return self.del_node(self.__head.next)
 
     def del_tail(self):
         if self.__head.next != self.__head:
-            self.del_node(self.__head.prev)
+            return self.del_node(self.__head.prev)
+
+    def get_head(self):
+        if self.__head.next != self.__head:
+            return self.__head.next
+
+    def get_tail(self):
+        if self.__head.next != self.__head:
+            return self.__head.prev
 
     def insert_after(self, node1, node2):
         node2.next = node1.next
@@ -105,6 +117,7 @@ class DoubleCircleList(object):
     def del_node(self, node):
         node.next.prev = node.prev
         node.prev.next = node.next
+        return node
 
     def travel(self, func):
         node = self.__head.next

@@ -1,6 +1,9 @@
 #!/usr/bin/python
 #coding:utf8
 
+from linklist import DoubleCircleList
+from stack import LinkStack
+
 class ArrayQueue(object):
 
     def __init__(self, max_size = 2):
@@ -55,23 +58,20 @@ class ArrayQueue(object):
     def size(self):
         return self.__N
 
-    def __iter__(self):
+    def iterator(self):
 
         class Iter(object):
             def __init__(self, v, N, first):
                 self.__v = v
                 self.__N = N
-                self.__i = 0
                 self.__first = first
 
-            def next(self):
-                if self.__i == self.__N:
-                    raise StopIteration
-                else:
-                    r = self.__v[self.__first]
-                    self.__i += 1
+            def __iter__(self):
+                i = 0
+                while i < self.__N:
+                    yield self.__v[self.__first]
                     self.__first = (self.__first + 1) % self.__N
-                    return r
+                    i += 1
 
 
         return Iter(self.__v, self.__N, self.__first)
@@ -79,44 +79,26 @@ class ArrayQueue(object):
 ################################################################################
 
 class LinkQueue(object):
-
+    '''使用双循环链表实现队列'''
     def __init__(self):
-        self.__head = None
-        self.__tail = None
         self.__N = 0
+        self.__dlink = DoubleCircleList()
 
     def enqueue(self, v):
-
-        class Node(object):
-            def __init__(self, v, next = None):
-                self.v = v
-                self.next = next
-
-        node = Node(v, None)
-        #只有一个节点时（既是尾节点也是头节点）
-        if not self.__tail:
-            self.__head = node
-        #添加到尾部
-        else:
-            self.__tail.next = node
-        self.__tail = node
+        self.__dlink.add_tail(v)
         self.__N += 1
 
     def dequeue(self):
         if self.isEmpty():
             raise Exception, "stack is empty when pop"
-        v = self.__head.v
-        self.__head = self.__head.next
-        #头节点为空时，尾节点也为空
-        if not self.__head:
-            self.__tail = None
+        node = self.__dlink.del_head()
         self.__N -= 1
-        return v
+        return node.v
 
     def peek(self):
         if self.isEmpty() == 0:
             raise Exception, "stack is empty when pop"
-        return self.__head.v
+        return self.__dlink.get_head().v
 
     def isEmpty(self):
         return self.__N == 0
@@ -124,34 +106,85 @@ class LinkQueue(object):
     def size(self):
         return self.__N
 
-    def __iter__(self):
+    def iterator(self):
+        return self.__dlink.iterator()
 
-        class Iter(object):
-            def __init__(self, head):
-                self.__head = head
 
-            def next(self):
-                if not self.__head:
-                    raise StopIteration
-                else:
-                    v = self.__head.v
-                    self.__head = self.__head.next
-                    return v
+class QueueTwoStack(object):
+    '''使用双栈实现队列'''
+    def __init__(self):
+        self.__stack1 = LinkStack()
+        self.__stack2 = LinkStack()
 
-        return Iter(self.__head)
+    def enqueue(self, v):
+        self.__stack2.push(v)
 
+    def dequeue(self):
+        if self.__stack1.isEmpty():
+            while not self.__stack2.isEmpty():
+                self.__stack1.push(self.__stack2.pop())
+        return self.__stack1.pop()
+
+    def peek(self):
+        if self.__stack1.isEmpty():
+            while not self.__stack2.isEmpty():
+                self.__stack1.push(self.__stack2.pop())
+        return self.__stack1.peek()
+
+    def isEmpty(self):
+        return self.__stack1.isEmpty() and self.__stack2.isEmpty()
+
+    def size(self):
+        return self.__stack1.size() + self.__stack2.size()
+
+
+class StackTwoQueue(object):
+    '''使用双队列实现栈'''
+    def __init__(self):
+        self.__q1 = LinkQueue()
+        self.__q2 = LinkQueue()
+
+    def push(self, v):
+        self.__q2.enqueue(v)
+
+    def pop(self):
+        while True:
+            x = self.__q2.dequeue()
+            if self.__q2.isEmpty():
+                self.__q1, self.__q2 = self.__q2, self.__q1
+                return x
+            else:
+                self.__q1.enqueue(x)
+
+    def peek(self):
+        while True:
+            x = self.__q2.dequeue()
+            self.__q1.enqueue(x)
+            if self.__q2.isEmpty():
+                self.__q1, self.__q2 = self.__q2, self.__q1
+                return x
+
+    def isEmpty(self):
+        return self.__q2.isEmpty()
+
+    def size(self):
+        return self.__q2.size()
 
 def main():
-    s = LinkQueue()
-    for i in range(10):
-        s.enqueue(i)
+    q = QueueTwoStack()
+    for i in range(20):
+        q.enqueue(i)
 
-    for x in s:
-        print x,
-    print
+    while not q.isEmpty():
+        print q.dequeue(), q.size()
+
+    s = StackTwoQueue()
+    for i in range(10):
+        s.push(i)
 
     while not s.isEmpty():
-        print s.dequeue()
+        print s.pop(),
+
 
 if __name__ == '__main__':
     main()

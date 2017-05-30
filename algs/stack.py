@@ -45,51 +45,49 @@ class ArrayStack(object):
     def size(self):
         return self.__N
 
-    def __iter__(self):
+    def iterator(self):
 
         class Iter(object):
             def __init__(self, v, N):
                 self.__v = v
                 self.__N = N
 
-            def next(self):
-                if self.__N == 0:
-                    raise StopIteration
-                else:
+            def __iter__(self):
+                while self.__N > 0:
                     self.__N -= 1
-                    return self.__v[self.__N]
+                    yield self.__v[self.__N]
 
         return Iter(self.__v, self.__N)
 
 
+class Node(object):
+    def __init__(self, v, next = None):
+        self.v = v
+        self.next = next
+
 class LinkStack(object):
 
     def __init__(self):
-        self.__head = None
+        self.__head = Node(None)
         self.__N = 0
 
     def push(self, v):
-
-        class Node(object):
-            def __init__(self, v, next = None):
-                self.v = v
-                self.next = next
-
-        self.__head = Node(v, self.__head)
+        node = Node(v, self.__head.next)
+        self.__head.next = node
         self.__N += 1
 
     def pop(self):
         if self.isEmpty():
             raise Exception, "stack is empty when pop"
-        v = self.__head.v
-        self.__head = self.__head.next
+        node = self.__head.next
+        self.__head.next = node.next
         self.__N -= 1
-        return v
+        return node.v
 
     def peek(self):
         if self.isEmpty() == 0:
             raise Exception, "stack is empty when pop"
-        return self.__head.v
+        return self.__head.next.v
 
     def isEmpty(self):
         return self.__N == 0
@@ -97,22 +95,19 @@ class LinkStack(object):
     def size(self):
         return self.__N
 
-    def __iter__(self):
+    def iterator(self):
 
         class Iter(object):
             def __init__(self, head):
                 self.__head = head
 
-            def next(self):
-                if not self.__head:
-                    raise StopIteration
-                else:
-                    v = self.__head.v
-                    self.__head = self.__head.next
-                    return v
+            def __iter__(self):
+                node = self.__head.next
+                while node:
+                    yield node.v
+                    node = node.next
 
         return Iter(self.__head)
-
 
 def main():
     s = ArrayStack()
@@ -120,11 +115,8 @@ def main():
     for i in range(10):
         s.push(i)
 
-    for x in s:
-        print x,
-
-    while not s.isEmpty():
-        s.pop()
+    for i in range(10):
+        print s.pop()
 
 if __name__ == '__main__':
     main()
