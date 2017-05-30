@@ -5,18 +5,81 @@ class Node(object):
     def __init__(self, v):
         self.v = v
         self.next = self
+
+class DNode(object):
+    def __init__(self, v):
+        self.v = v
+        self.next = self
         self.prev = self
 
-class DoubleCircleList(object):
+################################################################################
+
+class List(object):
+    '''单链表(仅有头节点)'''
     def __init__(self):
-        self.__head = Node(None)
+        node = Node(None)
+        node.next = None
+        self.__head = node
 
     def add_head(self, v):
         node = Node(v)
+        node.next = self.__head.next
+        self.__head.next = node
+
+    def add_tail(self, v):
+        tail = self.__head
+        while tail.next:
+            tail = tail.next
+        node = Node(v)
+        node.next = None
+        tail.next = node
+
+    def del_head(self):
+        if self.__head.next:
+            self.__head.next = self.__head.next.next
+
+    def del_tail(self):
+        if self.__head.next:
+            node = self.__head
+            while node.next.next:
+                node = node.next
+            node.next = None
+
+    def reverse(self):
+        prev = None
+        node = self.__head.next
+        while node:
+            next = node.next
+            node.next = prev
+            prev = node
+            node = next
+        self.__head.next = prev
+
+    def iterator(self):
+
+        class Iter(object):
+            def __init__(self, head):
+                self.__head = head
+
+            def __iter__(self):
+                node = self.__head.next
+                while node:
+                    yield node.v
+                    node = node.next
+        return Iter(self.__head)
+
+
+class DoubleCircleList(object):
+    '''双循环链表'''
+    def __init__(self):
+        self.__head = DNode(None)
+
+    def add_head(self, v):
+        node = DNode(v)
         self.insert_after(self.__head, node)
 
     def add_tail(self, v):
-        node = Node(v)
+        node = DNode(v)
         self.insert_before(self.__head, node)
 
     def del_head(self):
@@ -52,93 +115,48 @@ class DoubleCircleList(object):
     def is_empty(self):
         return self.__head.next == self.__head
 
-    def __iter__(self):
+    def iterator(self):
 
         class Iter(object):
             def __init__(self, head):
                 self.__head = head
-                self.__pos = self.__head.next
 
-            def next(self):
-                if self.__pos == self.__head:
-                    raise StopIteration
-                else:
-                    v = self.__pos.v
-                    self.__pos = self.__pos.next
-                    return v
-
+            def __iter__(self):
+                node = self.__head.next
+                while node != self.__head:
+                    yield node.v
+                    node = node.next
         return Iter(self.__head)
 
-    def __reversed__(self):
+    def reverse_iterator(self):
 
         class Iter(object):
             def __init__(self, head):
                 self.__head = head
-                self.__pos = self.__head.prev
 
-            def next(self):
-                if self.__pos == self.__head:
-                    raise StopIteration
-                else:
-                    v = self.__pos.v
-                    self.__pos = self.__pos.prev
-                    return v
+            def __iter__(self):
+                node = self.__head.prev
+                while node != self.__head:
+                    yield node.v
+                    node = node.prev
+                node = self.__head.next
 
         return Iter(self.__head)
 
-class LinkList(object):
-    def __init__(self):
-        self.__head = None
 
-    def add_head(self, v):
-        self.__head = Node(v, self.__head)
-
-    def del_head(self):
-        if self.__head == None or self.__head.next == None:
-            self.__head = None
-
-
-def list_dump(node):
-    while node:
-        print node.v, "->",
-        node = node.next
-    print
-
-
-def list_reverse_recursion(head):
-    if head == None or head.next == None:
-        return head
-    new_head = list_reverse(head.next)
-    head.next.next = head
-    head.next = None
-    return new_head
-
-
-def list_reverse(head):
-    prev = None
-    while head != None:
-        next = head.next
-        head.next = prev
-        prev = head
-        head = next
-    return prev
-
-def new_list(L):
-    node = None
-    for x in L:
-        node = Node(x, node)
-    return node
-
-def func(v):
-    print v,
 
 def main():
-    dlink = DoubleCircleList()
+    link = List()
     for i in range(10):
-        dlink.add_tail(i)
+        link.add_head(i)
 
-    for x in reversed(dlink):
+    link.reverse()
+    link.reverse()
+    it = link.iterator()
+    for x in it:
         print x,
+    print
+
 
 if __name__ == '__main__':
     main()
