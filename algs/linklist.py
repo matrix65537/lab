@@ -157,7 +157,6 @@ class DoubleCircleList(object):
         return Iter(self.__head)
 
 
-
 def main():
     link = List()
     for i in range(10):

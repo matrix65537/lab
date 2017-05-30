@@ -90,14 +90,14 @@ class LinkQueue(object):
 
     def dequeue(self):
         if self.isEmpty():
-            raise Exception, "stack is empty when pop"
+            raise Exception, "queue is empty when dequeue"
         node = self.__dlink.del_head()
         self.__N -= 1
         return node.v
 
     def peek(self):
         if self.isEmpty() == 0:
-            raise Exception, "stack is empty when pop"
+            raise Exception, "queue is empty when peek"
         return self.__dlink.get_head().v
 
     def isEmpty(self):
