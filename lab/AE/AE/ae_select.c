@@ -9,7 +9,7 @@ typedef struct aeApiState{
 
 static int aeApiCreate(aeEventLoop* eventLoop)
 {
-	aeApiState* state = malloc(sizeof(aeApiState));
+	aeApiState* state = (aeApiState*)malloc(sizeof(aeApiState));
 
 	if(!state)
 	{
@@ -95,4 +95,29 @@ static int aeApiPoll(aeEventLoop* eventLoop, struct timeval* tvp)
 static char* aeApiName(void)
 {
 	return "select";
+}
+
+#define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
+int gettimeofday(struct timeval *tv)
+{
+	FILETIME ft;
+	unsigned __int64 tmpres = 0;
+	static int tzflag;
+
+	if (NULL != tv)
+	{
+		GetSystemTimeAsFileTime(&ft);
+
+		tmpres |= ft.dwHighDateTime;
+		tmpres <<= 32;
+		tmpres |= ft.dwLowDateTime;
+
+		/*converting file time to unix epoch*/
+		tmpres -= DELTA_EPOCH_IN_MICROSECS; 
+		tmpres /= 10;  /*convert into microseconds*/
+		tmpres &= 0xFFFFFFFFFFFF;
+		tv->tv_sec = (long)(tmpres / 1000000UL);
+		tv->tv_usec = (long)(tmpres % 1000000UL);
+	}
+	return 0;
 }
