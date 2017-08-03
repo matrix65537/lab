@@ -1,41 +1,81 @@
 package org.laoguo.thread;
 
-import java.util.ArrayList;
+import java.lang.Thread.State;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.laoguo.util.Util;
+class Monitor implements Runnable {
 
-class MyThread implements Runnable {
+	private HashMap<Thread, State> threadMap;
 
-	int i = 0;
-	
-	Object lock = new Object();
+	public Monitor() {
+		threadMap = new HashMap<>();
+	}
+
+	public void register(Thread th) {
+		threadMap.put(th, th.getState());
+	}
+
+	public void remove(Thread th) {
+		threadMap.remove(th);
+	}
 
 	@Override
 	public void run() {
-			int a = i;
-			a++;
-			Thread.yield();
-			i = a;
+		for (Map.Entry<Thread, State> entry : threadMap.entrySet()) {
+			Thread th = entry.getKey();
+			State state = entry.getValue();
+			System.out.println(th.getName() + ": " + state);
+		}
+		while (true) {
+			for (Map.Entry<Thread, State> entry : threadMap.entrySet()) {
+				Thread th = entry.getKey();
+				State state = entry.getValue();
+				State newState = th.getState();
+				if (state != newState) {
+					System.out.println(th.getName() + ": " + newState);
+					entry.setValue(newState);
+				}
+			}
+		}
+	}
+}
+
+class TWorker implements Runnable {
+
+	@Override
+	public void run() {
+		try {
+			//Thread.sleep(3000);
+			System.out.println("before yield");
+			while(this != null){
+				Thread.yield();
+			}
+			System.out.println("after yield");
+			double sum = 0;
+			for(int i = 0; i < 10000; ++i){
+				sum += (i * i * 17 + 65537 / 17);
+			}
+			System.out.println("sum end");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
 
 public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
-		MyThread t = new MyThread();
-		ArrayList<Thread> list = new ArrayList<Thread>();
+		TWorker worker = new TWorker();
+		Thread threadWorker = new Thread(worker);
 
-		for (int i = 0; i < 4000; ++i) {
-			Thread th = new Thread(t);
-			list.add(th);
-			th.start();
-		}
-		for(Thread th : list){
-			th.join();
-		}
-		Util.P(t.i);
-		Util.P("begin");
-		Util.P("end");
+		Monitor monitor = new Monitor();
+		Thread threadMonitor = new Thread(monitor);
+
+		monitor.register(threadWorker);
+		//monitor.register(Thread.currentThread());
+
+		threadMonitor.start();
+		threadWorker.start();
 	}
-
 }

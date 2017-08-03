@@ -3,6 +3,7 @@ package org.laoguo.c;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class Collection {
 		s2.add("D");
 		P(s2);
 		
-		Map<String, String> m1 = new HashMap<String, String>();
+		Map<String, String> m1 = new LinkedHashMap<String, String>();
 		m1.put("A", "A");
 		m1.put("B", "B");
 		m1.put("C", "C");
