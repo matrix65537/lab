@@ -9,7 +9,7 @@ public class App
     public static void main( String[] args )
     {
         Logger logger = Logger.getLogger(App.class);
-        PropertyConfigurator.configure("c:\\work\\matrix65537\\lab\\trunk\\WorkSpace01\\M01\\log4j.properties");
+        PropertyConfigurator.configure("c:\\work\\matrix65537\\lab\\trunk\\WorkSpace01\\M01\\src\\main\\resources\\log4j.properties");
         logger.setLevel(Level.DEBUG);
         for(int i = 0; i < 100; ++i){
             logger.info("info" + i);

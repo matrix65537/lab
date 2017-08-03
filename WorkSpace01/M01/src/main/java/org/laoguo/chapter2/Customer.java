@@ -49,6 +49,11 @@ public class Customer {
 		this.remark = remark;
 	}
 
+	public String toString() {
+		return "[" + this.name + " " + this.contact + " " + this.telephone
+				+ " " + this.email + "]";
+	}
+
 	private long id;
 	private String name;
 	private String contact;
