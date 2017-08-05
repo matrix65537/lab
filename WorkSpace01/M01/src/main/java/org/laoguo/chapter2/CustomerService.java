@@ -1,36 +1,29 @@
 package org.laoguo.chapter2;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
 public class CustomerService {
 	public List<Customer> getCustomerList() {
-		Connection conn = null;
-		try {
-
-			String sql = "select * from customer";
-			conn = DatabaseHelper.getConnection();
-			return DatabaseHelper.queryEntityList(Customer.class, conn, sql,
-					(Object[]) null);
-		} finally {
-			DatabaseHelper.closeConnection(conn);
-		}
+		String sql = "select * from customer";
+		return DatabaseHelper.queryEntityList(Customer.class, sql,
+				(Object[]) null);
 	}
 
 	public Customer getCustomer(long id) {
-		return null;
+		String sql = "select * from customer where id = ?";
+		return DatabaseHelper.queryEntity(Customer.class, sql, id);
 	}
 
 	public boolean createCustomer(Map<String, Object> fieldMap) {
-		return false;
+		return DatabaseHelper.insertEntity(Customer.class, fieldMap);
 	}
 
 	public boolean updateCustomer(long id, Map<String, Object> fieldMap) {
-		return false;
+		return DatabaseHelper.updateEntity(Customer.class, id, fieldMap);
 	}
 
 	public boolean deleteCustomer(long id) {
-		return false;
+		return DatabaseHelper.deleteEntity(Customer.class, id);
 	}
 }

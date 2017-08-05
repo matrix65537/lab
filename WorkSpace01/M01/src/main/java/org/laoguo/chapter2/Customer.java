@@ -50,7 +50,7 @@ public class Customer {
 	}
 
 	public String toString() {
-		return "[" + this.name + " " + this.contact + " " + this.telephone
+		return "[" + this.id + " " + this.name + " " + this.contact + " " + this.telephone
 				+ " " + this.email + "]";
 	}
 
