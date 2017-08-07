@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class DriverM {
+public class TestDriverManager {
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			SQLException {

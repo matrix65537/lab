@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
-public class DBCP {
+public class TestDBCP {
 
 	private String url = "jdbc:mysql://localhost:3306";
 	private String user = "laoguo";
@@ -37,7 +37,7 @@ public class DBCP {
 	}
 
 	public static void main(String[] args) {
-		new DBCP().test();
+		new TestDBCP().test();
 	}
 
 }
