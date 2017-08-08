@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -19,8 +22,9 @@ public final class DatabaseHelper {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DatabaseHelper.class);
 
-	private static final ThreadLocal<Connection> CONNECTION_HOLDER = new ThreadLocal<Connection>();
-	private static final QueryRunner QUERY_RUNNER = new QueryRunner();
+	private static final BasicDataSource DATA_SOURCE;
+	private static final ThreadLocal<Connection> CONNECTION_HOLDER;
+	private static final QueryRunner QUERY_RUNNER;
 
 	private static final String DRIVER;
 	private static final String URL;
@@ -29,17 +33,31 @@ public final class DatabaseHelper {
 
 	// 加载mysql驱动
 	static {
+		DATA_SOURCE = new BasicDataSource();
+		CONNECTION_HOLDER = new ThreadLocal<Connection>();
+		QUERY_RUNNER = new QueryRunner();
+
 		Properties conf = PropsUtil.loadProps("config.properties");
 		DRIVER = conf.getProperty("jdbc.driver");
 		URL = conf.getProperty("jdbc.url");
 		USERNAME = conf.getProperty("jdbc.username");
 		PASSWORD = conf.getProperty("jdbc.password");
 
-		try {
-			Class.forName(DRIVER);
-		} catch (ClassNotFoundException e) {
-			LOGGER.error("can not load jdbc driver", e);
-		}
+		DATA_SOURCE.setDriverClassName(DRIVER);
+		DATA_SOURCE.setUrl(URL);
+		DATA_SOURCE.setUsername(USERNAME);
+		DATA_SOURCE.setPassword(PASSWORD);
+		DATA_SOURCE.setMaxWaitMillis(30000);
+		DATA_SOURCE.setRemoveAbandonedOnBorrow(true);
+		DATA_SOURCE.setRemoveAbandonedOnMaintenance(true);
+		DATA_SOURCE.setRemoveAbandonedTimeout(1);
+		DATA_SOURCE.setLogAbandoned(true);
+		
+	}
+
+	public static Connection getRealConnection() throws SQLException {
+		Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+		return conn;
 	}
 
 	// 获取数据库连接
@@ -47,7 +65,8 @@ public final class DatabaseHelper {
 		Connection conn = CONNECTION_HOLDER.get();
 		if (conn == null) {
 			try {
-				conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+				// conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+				conn = DATA_SOURCE.getConnection();
 				CONNECTION_HOLDER.set(conn);
 				LOGGER.info("get connection");
 			} catch (SQLException e) {
@@ -57,6 +76,12 @@ public final class DatabaseHelper {
 				CONNECTION_HOLDER.set(conn);
 			}
 		}
+		LOGGER.info("===> idle  " + DATA_SOURCE.getNumIdle());
+		LOGGER.info("===> active" + DATA_SOURCE.getNumActive());
+		LOGGER.info("===> total " + DATA_SOURCE.getMaxTotal());
+		LOGGER.info("===> timeout1 " + DATA_SOURCE.getRemoveAbandonedOnBorrow());
+		LOGGER.info("===> timeout2 " + DATA_SOURCE.getRemoveAbandonedOnMaintenance());
+		LOGGER.info("===> timeout3 " + DATA_SOURCE.getRemoveAbandonedTimeout());
 		return conn;
 	}
 
@@ -86,8 +111,6 @@ public final class DatabaseHelper {
 		} catch (SQLException e) {
 			LOGGER.error("query entity list failure", e);
 			throw new RuntimeException(e);
-		} finally {
-			closeConnection();
 		}
 		return entityList;
 	}
@@ -104,8 +127,6 @@ public final class DatabaseHelper {
 		} catch (SQLException e) {
 			LOGGER.error("query entity failure", e);
 			throw new RuntimeException(e);
-		} finally {
-			closeConnection();
 		}
 		return entity;
 	}
@@ -121,8 +142,6 @@ public final class DatabaseHelper {
 		} catch (SQLException e) {
 			LOGGER.error("execute query failure", e);
 			throw new RuntimeException(e);
-		} finally {
-			closeConnection();
 		}
 		return result;
 	}
@@ -137,8 +156,6 @@ public final class DatabaseHelper {
 		} catch (SQLException e) {
 			LOGGER.error("execute update failure", e);
 			throw new RuntimeException(e);
-		} finally {
-			closeConnection();
 		}
 		return rows;
 	}
@@ -181,7 +198,8 @@ public final class DatabaseHelper {
 		for (String fieldName : fieldMap.keySet()) {
 			columns.append(fieldName).append("=?, ");
 		}
-		sql += columns.substring(0, columns.lastIndexOf(", ")) + " where id = ?";
+		sql += columns.substring(0, columns.lastIndexOf(", "))
+				+ " where id = ?";
 
 		List<Object> paramList = new ArrayList<Object>();
 		paramList.addAll(fieldMap.values());

@@ -19,7 +19,6 @@ public class TestDriverManager {
 		Map<Connection, Connection> h = new HashMap();
 		Connection con = null;
 		int i = 0;
-		ConnectionPool pool = new ConnectionPool(url, user, password);
 		while (true) {
 			
 			try {
