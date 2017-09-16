@@ -3,14 +3,14 @@ package org.laoguo.dproxy;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import sun.misc.ProxyGenerator;
+//import sun.misc.ProxyGenerator;
 
 public class ProxyUtil {
 
 	private FileOutputStream out;
 
 	public static void saveProxyClass(String path){
-		byte[] classFile = ProxyGenerator.generateProxyClass("$Proxy_01", RealSubject.class.getInterfaces());
+		byte[] classFile = null;//ProxyGenerator.generateProxyClass("$Proxy_01", RealSubject.class.getInterfaces());
 		try {
 			FileOutputStream out = new FileOutputStream(path);
 			out.write(classFile);
