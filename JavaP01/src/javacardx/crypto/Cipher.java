@@ -2,6 +2,7 @@ package javacardx.crypto;
 
 import javacard.security.Key;
 import javacard.security.CryptoException;
+import javacard.security.impl.CipherSymm;
 
 /**
  * The <code>Cipher</code> class is the abstract base class for Cipher
@@ -233,15 +234,39 @@ abstract public class Cipher
      *                mode is not supported.
      *                </ul>
      */
+    
+    
     public static final Cipher getInstance(byte algorithm,
                                            boolean externalAccess) throws CryptoException
     {
+    	Cipher cipher = null;
         switch (algorithm)
         {
+        case ALG_DES_ECB_NOPAD:
+        {
+        	cipher = new CipherSymm(algorithm);
+        	
+        }break;
+        case ALG_DES_CBC_NOPAD:
+        {
+        	
+        }break;
+        case ALG_AES_BLOCK_128_ECB_NOPAD:
+        {
+        	
+        }break;
+        case ALG_AES_BLOCK_128_CBC_NOPAD:
+        {
+        	
+        }break;
+        case ALG_RSA_NOPAD:
+        {
+        	
+        }break;
         default:
             CryptoException.throwIt(CryptoException.NO_SUCH_ALGORITHM);
         }
-        return null;
+        return cipher;
     }
 
     /**
