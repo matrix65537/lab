@@ -1,8 +1,8 @@
 package javacard.security;
 
 /**
- * <code>AESKey</code> contains a 16/24/32 byte key for AES computations based
- * on the Rijndael algorithm.
+ * <code>KoreanSEEDKey</code> contains an 16-byte key for Korean Seed
+ * Algorithm operations.
  * <p>
  * When the key data is set, the key is initialized and ready for use.
  * <p>
@@ -11,21 +11,18 @@ package javacard.security;
  * @see Signature Signature
  * @see javacardx.crypto.Cipher javacardx.crypto.Cipher
  * @see javacardx.crypto.KeyEncryption javacardx.crypto.KeyEncryption
- * @since Java Card 2.2
+ * @since 2.2.2
  */
-public interface AESKey extends SecretKey
+public interface KoreanSEEDKey extends SecretKey
 {
 
     /**
-     * <p>
-     * Sets the <code>Key</code> data. The plaintext length of input key data
-     * is 16/24/32 bytes. The data format is big-endian and right-aligned (the
-     * least significant bit is the least significant bit of last byte). Input
-     * key data is copied into the internal representation.
-     * </p>
+     * Sets the <code>Key</code> data. The plain text length of input key data
+     * is The data format is big-endian and right-aligned (the least significant
+     * bit is the least significant bit of last byte). Input key data is copied
+     * into the internal representation.
      * <p>
      * Note:
-     * </p>
      * <ul>
      * <li><em>If the key object implements the </em><code>javacardx.crypto.KeyEncryption</code><em>
      * interface and the </em><code>Cipher</code><em> object specified via </em><code>setKeyCipher()</code><em>
@@ -44,19 +41,19 @@ public interface AESKey extends SecretKey
      *                </ul>
      * @exception ArrayIndexOutOfBoundsException
      *                if <CODE>kOff</CODE> is negative or the
-     *                <CODE>keyData</CODE> array is too short.
+     *                <CODE>keyData</CODE> array is too short
      * @exception NullPointerException
      *                if the <CODE>keyData</CODE> parameter is
-     *                <CODE>null</CODE>.
+     *                <CODE>null</CODE>
      */
     void setKey(byte[] keyData, short kOff) throws CryptoException,
     NullPointerException, ArrayIndexOutOfBoundsException;
 
     /**
      * Returns the <code>Key</code> data in plain text. The length of output
-     * key data is 16/24/32 bytes. The data format is big-endian and
-     * right-aligned (the least significant bit is the least significant bit of
-     * last byte).
+     * key data is 16 bytes for Korean Seed Algorithm. The data format is
+     * big-endian and right-aligned (the least significant bit is the least
+     * significant bit of last byte).
      *
      * @param keyData
      *            byte array to return key data
@@ -73,6 +70,6 @@ public interface AESKey extends SecretKey
      *                </ul>
      * @see Key Key
      */
-    byte getKey(byte[] keyData, short kOff) throws CryptoException;
+    byte getKey(byte[] keyData, short kOff);
 
 }
