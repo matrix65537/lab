@@ -87,5 +87,6 @@ public class CryptoException extends CardRuntimeException
      */
     public static void throwIt(short reason)
     {
+    	throw new CryptoException(reason);
     }
 }

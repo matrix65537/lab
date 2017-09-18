@@ -1,5 +1,10 @@
 package javacard.security;
 
+import javacard.security.impl.AESKeyImpl;
+import javacard.security.impl.DESKeyImpl;
+import javacard.security.impl.RSAPrivateCrtKeyImpl;
+import javacard.security.impl.RSAStdKeyImpl;
+
 /**
  * The <code>KeyBuilder</code> class is a key object factory.
  *
@@ -331,13 +336,13 @@ public class KeyBuilder
      * @param keyLength
      *            the key size in bits. The valid key bit lengths are key type
      *            dependent. Some common key lengths are listed above above in
-     *            the <code>LENGTH_*</code> constants. See
-     *            {@link #LENGTH_DES LENGTH_DES}.
+     *            the <code>LENGTH_*</code> constants. See {@link #LENGTH_DES
+     *            LENGTH_DES}.
      * @param keyEncryption
      *            if <code>true</code> this boolean requests a key
      *            implementation which implements the
-     *            <code>javacardx.crypto.KeyEncryption</code> interface. The
-     *            key implementation returned may implement the
+     *            <code>javacardx.crypto.KeyEncryption</code> interface. The key
+     *            implementation returned may implement the
      *            <code>javacardx.crypto.KeyEncryption</code> interface even
      *            when this parameter is <code>false</code>.
      * @return the key object instance of the requested key type, length and
@@ -345,26 +350,89 @@ public class KeyBuilder
      * @exception CryptoException
      *                with the following reason codes:
      *                <ul>
-     *                <li><code>CryptoException.NO_SUCH_ALGORITHM</code> if
-     *                the requested algorithm associated with the specified
-     *                type, size of key and key encryption interface is not
-     *                supported.
+     *                <li><code>CryptoException.NO_SUCH_ALGORITHM</code> if the
+     *                requested algorithm associated with the specified type,
+     *                size of key and key encryption interface is not supported.
      *                </ul>
      */
     public static Key buildKey(byte keyType, short keyLength,
                                boolean keyEncryption) throws CryptoException
     {
-
+    	Key key = null;
         switch (keyType)
         {
+        case TYPE_DES:
+            {
+                switch (keyLength)
+                {
+                case LENGTH_DES:
+                case LENGTH_DES3_2KEY:
+                case LENGTH_DES3_3KEY:
+                    {
+                        key = new DESKeyImpl(keyType, keyLength);
+                    }
+                default:
+                    {
+                        CryptoException.throwIt(CryptoException.ILLEGAL_VALUE);
+                    }
+                }
+            }
+            break;
+        case TYPE_AES:
+            {
+                switch (keyLength)
+                {
+                case LENGTH_AES_128:
+                case LENGTH_AES_192:
+                case LENGTH_AES_256:
+                    {
+                        key = new AESKeyImpl(keyType, keyLength);
+                    }
+                default:
+                    {
+                        CryptoException.throwIt(CryptoException.ILLEGAL_VALUE);
+                    }
+                }
+            }
+            break;
+        case TYPE_RSA_PUBLIC:
+        case TYPE_RSA_PRIVATE:
+        case TYPE_RSA_CRT_PRIVATE:
+            {
+            	if((keyLength >= LENGTH_RSA_512) && (keyLength <= LENGTH_RSA_2048) && (keyLength % 64 == 0))
+            	{
+            		if(keyType == TYPE_RSA_CRT_PRIVATE)
+            		{
+            			key = new RSAPrivateCrtKeyImpl(keyType, keyLength);
+            		}
+            		else
+            		{
+            			key = new RSAStdKeyImpl(keyType, keyLength);
+            		}
+            	}
+            	else
+            	{
+            		CryptoException.throwIt(CryptoException.ILLEGAL_VALUE);
+            	}
+            }
+            break;
+        case TYPE_EC_FP_PUBLIC:
+            {
+
+            }
+            break;
+        case TYPE_EC_FP_PRIVATE:
+            {
+
+            }
+            break;
         default:
             CryptoException.throwIt(CryptoException.NO_SUCH_ALGORITHM);
         }
-        return null;
+        return key;
     }
 
     KeyBuilder()
     {
     }
-
 }
