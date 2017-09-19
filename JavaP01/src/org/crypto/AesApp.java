@@ -17,7 +17,7 @@ public class AesApp {
 		System.out.println(algorithm);
 		try {
 			SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance(algorithm);
+            Cipher cipher = Cipher.getInstance(algorithm, "BC");
 			System.out.println(cipher.getProvider());
 			if(iv != null){
 				IvParameterSpec ivParam = new IvParameterSpec(iv);
