@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <WinSock.h>
+#include <stdint.h>
 #include "ae.h"
 
 #define LISTEN_PORT 9090
@@ -15,8 +16,46 @@ int Timer1(struct aeEventLoop* eventLoop, long long id, void* clientData)
 
 int Timer2(struct aeEventLoop* eventLoop, long long id, void* clientData)
 {
-	printf("Timer2\n");
+	printf("        Timer2\n");
 	return TIMER2_MS;
+}
+
+#define BUF_SIZE 0x10
+void ReadProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mask)
+{
+	uint8_t buf[BUF_SIZE + 1];
+	int ret;
+
+	memset(buf, 0x00, sizeof(buf));
+	printf("ReadProc\n");
+	ret = recv(fd, buf, BUF_SIZE, 0);
+	if(ret <= 0)
+	{
+		printf("recv error\n");
+		closesocket(fd);
+	}
+	else
+	{
+		printf("%s\n", (char*)buf);
+	}
+}
+
+void ListenProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mask)
+{
+	int ret;
+	struct sockaddr_in client_addr;
+	int sock_addr_len = sizeof(client_addr);
+
+	ret = accept(fd, (struct sockaddr*)&client_addr, &sock_addr_len); 
+	if(ret == INVALID_SOCKET)
+	{
+		printf("accept error.\n");
+	}
+	else
+	{
+		printf("accept success.\n");
+		aeCreateFileEvent(eventLoop, ret, AE_READABLE, ReadProc, NULL);
+	}
 }
 
 int main()
@@ -58,7 +97,7 @@ int main()
 		exit(1);
 	}
 
-	aeCreateFileEvent(eventLoop, server_sock_fd, AE_READABLE, NULL, NULL);
+	aeCreateFileEvent(eventLoop, server_sock_fd, AE_READABLE, ListenProc, NULL);
 
 	aeCreateTimeEvent(eventLoop, TIMER1_MS, Timer1, NULL, NULL);
 	aeCreateTimeEvent(eventLoop, TIMER2_MS, Timer2, NULL, NULL);
