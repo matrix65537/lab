@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define RING_TEMP_BUF_SIZE 0x04
+#define RING_TEMP_BUF_SIZE 0x20
 
 typedef struct Ring{
     uint32_t size;

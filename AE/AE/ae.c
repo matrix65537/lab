@@ -223,8 +223,8 @@ static int processTimeEvents(aeEventLoop* eventLoop)
 			continue;
 		}
 		aeGetTime(&now_sec, &now_ms);
-		log_debug(" now: %d %d\n", now_sec, now_ms);
-		log_debug("when: %d %d\n", te->when_sec, te->when_ms);
+		log_develop(" now: %d %d\n", now_sec, now_ms);
+		log_develop("when: %d %d\n", te->when_sec, te->when_ms);
 		if ((now_sec > te->when_sec) || (now_sec == te->when_sec && now_ms >= te->when_ms))
 		{
 			long long retval;
@@ -235,7 +235,7 @@ static int processTimeEvents(aeEventLoop* eventLoop)
 			if (retval != AE_NOMORE)
 			{
 				aeAddMillisecondsToNow(retval, &te->when_sec, &te->when_ms);
-				log_debug("add mill to now: %d %d\n", te->when_sec, te->when_ms);
+				log_develop("add mill to now: %d %d\n", te->when_sec, te->when_ms);
 			}
 			else
 			{

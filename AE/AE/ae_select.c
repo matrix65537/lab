@@ -34,12 +34,12 @@ static int aeApiAddEvent(aeEventLoop* eventLoop, int fd, int mask)
 
 	if(mask & AE_READABLE)
 	{
-		log_debug("FD_SET readable: %d\n", fd);
+		log_develop("FD_SET readable: %d\n", fd);
 		FD_SET(fd, &state->rfds);
 	}
 	if (mask & AE_WRITABLE)
 	{
-		log_debug("FD_SET writable: %d\n", fd);
+		log_develop("FD_SET writable: %d\n", fd);
 		FD_SET(fd, &state->wfds);
 	}
 	return 0;
@@ -51,12 +51,12 @@ static void aeApiDelEvent(aeEventLoop* eventLoop, int fd, int mask)
 
 	if (mask & AE_READABLE)
 	{
-		log_debug("FD_DEL readable: %d\n", fd);
+		log_develop("FD_DEL readable: %d\n", fd);
 		FD_CLR(fd, &state->rfds);
 	}
 	if(mask & AE_WRITABLE)
 	{
-		log_debug("FD_DEL writable: %d\n", fd);
+		log_develop("FD_DEL writable: %d\n", fd);
 		FD_CLR(fd, &state->wfds);
 	}
 }
@@ -70,10 +70,17 @@ static int aeApiPoll(aeEventLoop* eventLoop, struct timeval* tvp)
 	memcpy(&state->_rfds, &state->rfds, sizeof(fd_set));
 	memcpy(&state->_wfds, &state->wfds, sizeof(fd_set));
 
-	log_debug("====================select[%d]: maxfd = %d [%d %d]\n", FD_SETSIZE, eventLoop->maxfd, tvp->tv_sec, tvp->tv_usec);
+	if(tvp)
+	{
+		log_develop("====================select[%d]: maxfd = %d [%d %d]\n", FD_SETSIZE, eventLoop->maxfd, tvp->tv_sec, tvp->tv_usec);
+	}
+	else
+	{
+		log_develop("====================select[%d]: maxfd = %d [NULL]\n", FD_SETSIZE, eventLoop->maxfd);
+	}
 	retval = select(eventLoop->maxfd + 1, &state->_rfds, &state->_wfds, NULL, tvp);
 	lastErr = WSAGetLastError();
-	log_debug("[%d] WSAGetLastError: %d\n", retval, lastErr);
+	log_develop("[%d] WSAGetLastError: %d\n", retval, lastErr);
 	if(retval > 0)
 	{
 		for (j = 0; j <= eventLoop->maxfd; ++j)
@@ -86,12 +93,12 @@ static int aeApiPoll(aeEventLoop* eventLoop, struct timeval* tvp)
 			}
 			if ((fe->mask & AE_READABLE) && (FD_ISSET(j, &state->_rfds)))
 			{
-				log_debug("%d readable fired\n", j);
+				log_develop("%d readable fired\n", j);
 				mask |= AE_READABLE;
 			}
 			if ((fe->mask & AE_WRITABLE) && (FD_ISSET(j, &state->_wfds)))
 			{
-				log_debug("%d writable fired\n", j);
+				log_develop("%d writable fired\n", j);
 				mask |= AE_WRITABLE;
 			}
 			eventLoop->fired[numevents].fd = j;

@@ -20,17 +20,17 @@ typedef struct DataNode{
 #define LISTEN_PORT 9090
 
 #define TIMER1_MS	4000
-#define TIMER2_MS	1000
+#define TIMER2_MS	10000
 
 int Timer1(struct aeEventLoop* eventLoop, long long id, void* clientData)
 {
-	printf("Timer1: %d %d\n", eventLoop->timeEventHead->when_sec, eventLoop->timeEventHead->when_ms);
+	log_info("Timer1: %d %d\n", eventLoop->timeEventHead->when_sec, eventLoop->timeEventHead->when_ms);
 	return TIMER1_MS;
 }
 
 int Timer2(struct aeEventLoop* eventLoop, long long id, void* clientData)
 {
-	printf("        Timer2\n");
+	log_info("        Timer2\n");
 	return TIMER2_MS;
 }
 
@@ -47,12 +47,12 @@ void ListenProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mas
 	ret = accept(fd, (struct sockaddr*)&client_addr, &sock_addr_len); 
 	if(ret == INVALID_SOCKET)
 	{
-		printf("accept error.\n");
+		log_error("accept error.\n");
 	}
 	else
 	{
 		Ring* ring = create_ring(RING_TEMP_BUF_SIZE);
-		printf("Accepted client:%s:%d fd = %d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), ret);   
+		log_info("Accepted client:%s:%d fd = %d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), ret);   
 		aeCreateFileEvent(eventLoop, ret, AE_READABLE, RWProc, ring);
 	}
 }
@@ -66,13 +66,13 @@ void RWProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mask)
 	aeDeleteFileEvent(eventLoop, fd, AE_READABLE | AE_WRITABLE);
 	if(mask & AE_READABLE)
 	{
-		printf("ReadProc\n");
+		log_debug("ReadProc\n");
 		size = get_remain_size(ring);
 		ret = recv(fd, ring->temp_buf, size, 0);
 
 		if(ret <= 0)
 		{
-			printf("recv error, close socket %d.\n", fd);
+			log_error("recv error, close socket %d.\n", fd);
 			closesocket(fd);
 			delete_ring(ring);
 		}
@@ -92,14 +92,14 @@ void RWProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mask)
 	}
 	else if(mask & AE_WRITABLE)
 	{
-		printf("WriteProc\n");
+		log_debug("WriteProc\n");
 		size = get_data_size(ring);
 		ring_read_data(ring, ring->temp_buf, size);
 		ret = send(fd, ring->temp_buf, size, 0);
 
 		if(ret <= 0)
 		{
-			printf("send error, close socket.\n");
+			log_error("send error, close socket.\n");
 			closesocket(fd);
 			delete_ring(ring);
 		}
@@ -120,34 +120,6 @@ void RWProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mask)
 	}
 }
 
-void WriteProc(struct aeEventLoop* eventLoop, int fd, void* clientData, int mask)
-{
-	int ret;
-	DataNode* pNode = (DataNode*)clientData;
-
-	printf("Write Proc\n");
-	ret = send(fd, pNode->data + pNode->write_offset, MAX_DATA_SIZE - pNode->write_offset, 0);
-	if(ret <= 0)
-	{
-		printf("send error, close socket.\n");
-		aeDeleteFileEvent(eventLoop, fd, mask);
-		closesocket(fd);
-		free(pNode);
-	}
-	else
-	{
-		//recv finished, can send to client
-		util_hex_dump("recv", pNode->data + pNode->write_offset, ret);
-		pNode->write_offset += ret;
-		if(pNode->write_offset == MAX_DATA_SIZE)
-		{
-			aeDeleteFileEvent(eventLoop, fd, AE_WRITABLE);
-			aeCreateFileEvent(eventLoop, ret, AE_READABLE, RWProc, pNode);
-			pNode->read_offset = 0;
-		}
-	}
-}
-
 extern void test_log();
 int main()
 {
@@ -161,7 +133,7 @@ int main()
 	WSADATA wsaData;
 	WSAStartup(0x0202, &wsaData);
 
-	log_set_level(LOG_LEVEL_DBUG);
+	log_set_level(LOG_LEVEL_INFO);
 
 	server_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_listen_fd == INVALID_SOCKET)
@@ -193,7 +165,7 @@ int main()
 	aeCreateFileEvent(eventLoop, server_listen_fd, AE_READABLE, ListenProc, NULL);
 
 	//aeCreateTimeEvent(eventLoop, TIMER1_MS, Timer1, NULL, NULL);
-	aeCreateTimeEvent(eventLoop, TIMER2_MS, Timer2, NULL, NULL);
+	//aeCreateTimeEvent(eventLoop, TIMER2_MS, Timer2, NULL, NULL);
 
 	aeMain(eventLoop);
 
