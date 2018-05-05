@@ -101,9 +101,9 @@ void aeDeleteFileEvent(aeEventLoop* eventLoop, int fd, int mask)
 		{
 			if (eventLoop->events[j].mask != AE_NONE)
 			{
+				eventLoop->maxfd = j;
 				break;
 			}
-			eventLoop->maxfd = j;
 		}
 	}
 	aeApiDelEvent(eventLoop, fd, mask);
@@ -202,6 +202,7 @@ static aeTimeEvent* aeSearchNearestTimer(aeEventLoop* eventLoop)
 	return nearest;
 }
 
+//遍历时间事件，如果到期则执行
 static int processTimeEvents(aeEventLoop* eventLoop)
 {
 	int processed = 0;
@@ -222,7 +223,9 @@ static int processTimeEvents(aeEventLoop* eventLoop)
 			continue;
 		}
 		aeGetTime(&now_sec, &now_ms);
-		if ((now_sec > te->when_sec) || (now_sec == te->when_sec && now_ms > te->when_ms))
+		log_debug(" now: %d %d\n", now_sec, now_ms);
+		log_debug("when: %d %d\n", te->when_sec, te->when_ms);
+		if ((now_sec > te->when_sec) || (now_sec == te->when_sec && now_ms >= te->when_ms))
 		{
 			long long retval;
 			id = te->id;
@@ -232,6 +235,7 @@ static int processTimeEvents(aeEventLoop* eventLoop)
 			if (retval != AE_NOMORE)
 			{
 				aeAddMillisecondsToNow(retval, &te->when_sec, &te->when_ms);
+				log_debug("add mill to now: %d %d\n", te->when_sec, te->when_ms);
 			}
 			else
 			{
@@ -264,6 +268,7 @@ int aeProcessEvents(aeEventLoop* eventLoop, int flags)
 		{
 			shortest = aeSearchNearestTimer(eventLoop);
 		}
+		//找到了时间事件
 		if (shortest)
 		{
 			long now_sec, now_ms;
@@ -301,6 +306,7 @@ int aeProcessEvents(aeEventLoop* eventLoop, int flags)
 			}
 		}
 
+		//printf("aeApiPoll:\n");
 		numevents = aeApiPoll(eventLoop, tvp);
 		for (j = 0; j < numevents; ++j)
 		{
@@ -375,6 +381,7 @@ void aeMain(aeEventLoop* eventLoop)
 		{
 			eventLoop->beforesleep(eventLoop);
 		}
+		//printf("ProcessEvents:\n");
 		aeProcessEvents(eventLoop, AE_ALL_EVENTS);
 	}
 	

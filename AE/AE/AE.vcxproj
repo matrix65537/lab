@@ -76,10 +76,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ae.c" />
+    <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="ring.c" />
+    <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ae.h" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="ring.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
